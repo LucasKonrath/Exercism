@@ -1,0 +1,31 @@
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+.DS_Store
+
+# Build directories
+out/
+build/
+bin/
+target/
+
+# Language specific
+# Zig
+zig-cache/
+zig-out/
+
+# Exercism specific
+.exercism/
+
+# Logs
+*.log
+
+# Dependency directories
+node_modules/
+
+# Compiled files
+*.class
+*.o
+*.obj
