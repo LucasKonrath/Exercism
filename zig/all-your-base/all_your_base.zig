@@ -15,9 +15,46 @@ pub fn convert(
     input_base: u32,
     output_base: u32,
 ) (mem.Allocator.Error || ConversionError)![]u32 {
-    _ = allocator;
-    _ = digits;
-    _ = input_base;
-    _ = output_base;
-    @compileError("please implement the convert function");
+    const number = try to_number(digits, input_base);
+    return to_digits(allocator, number, output_base);
+}
+
+pub fn to_number(digits: []const u32, base: u32) (mem.Allocator.Error || ConversionError)!u32 {
+    if (base < 2) return ConversionError.InvalidInputBase;
+    var result: u32 = 0;
+    for (digits, 1..) |d, i| {
+        if (d >= base) {
+            return error.InvalidDigit;
+        }
+        const mul = std.math.pow(usize, base, digits.len - i);
+        result += d * @as(u32, @intCast(mul));
+    }
+    return result;
+}
+
+pub fn to_digits(
+    allocator: mem.Allocator,
+    number: u32,
+    base: u32,
+) ![]u32 {
+    if (base < 2) return ConversionError.InvalidOutputBase;
+
+    if (number == 0) {
+        const zero = try allocator.alloc(u32, 1);
+        zero[0] = 0;
+        return zero;
+    }
+
+    var digits = std.ArrayList(u32).init(allocator);
+    defer digits.deinit();
+
+    var n = number;
+    while (n > 0) {
+        const digit = n % base;
+        try digits.append(digit);
+        n /= base;
+    }
+    // Reverse the digits to get the correct order
+    std.mem.reverse(u32, digits.items);
+    return digits.toOwnedSlice();
 }
