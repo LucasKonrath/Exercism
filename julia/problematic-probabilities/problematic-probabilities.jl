@@ -1,19 +1,29 @@
+using Statistics
+
 function rationalize(successes, trials)
-    vec = Rational{Int64}[]
-    for i = 0; i <= trials; i += 1
-        push!(vec, Rational(successes, trials))
-    end
-    return vec  
+    successes .// trials
 end
 
 function probabilities(successes, trials)
-
+    successes ./ trials
 end
 
 function checkmean(successes, trials)
-
+    rational = mean(rationalize(successes, trials))
+    real = mean(probabilities(successes, trials))
+    if float(rational) == real
+        true
+    else
+        rational
+    end    
 end
 
 function checkprob(successes, trials)
-
+    rational = prod(rationalize(successes, trials))
+    real = prod(probabilities(successes, trials))
+    if float(rational) == real
+        true
+    else
+        rational
+    end
 end
